@@ -1,12 +1,12 @@
+
 services:
   postgres:
     image: postgres:15
-    container_name: buisness
     restart: always
     environment:
-      POSTGRES_USER: islamdin
-      POSTGRES_PASSWORD: wannapoopbro
-      POSTGRES_DB: ranobe
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5433:5432"
     volumes:
@@ -14,11 +14,10 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: pgadmin_app
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: isla@isla.com
-      PGADMIN_DEFAULT_PASSWORD: islampc201rahmatu
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - "5050:80"
     volumes:
