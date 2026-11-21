@@ -5,33 +5,53 @@ import islamdin.ru.Repository.ProductsRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
+
     private final ProductsRepository productsRepository;
 
     public ProductService(ProductsRepository productsRepository) {
         this.productsRepository = productsRepository;
     }
 
-    public Product getProductById(Long id){
-        return productsRepository.findById(id).orElseThrow(() -> new RuntimeException("No chaps"));
-    }
-
-    public List<Product> getAllProducts(){
+    public List<Product> getAllProducts() {
         return productsRepository.findAll();
     }
 
-    public Product getProductByName(String name){
-        return productsRepository.findByName(name);
+    public Product getProductById(Long id) {
+        return productsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Товар с id " + id + " не найден"));
     }
 
-    public List<Product> getProductsByName(String name){
-        return productsRepository.findAllByName(name);
-    }
-
-    public Product addProduct(Product product){
+    public Product addProduct(Product product) {
         return productsRepository.save(product);
+    }
+
+    public Product updateProduct(Long id, Product updatedProduct) {
+        Product existing = getProductById(id);
+
+        existing.setName(updatedProduct.getName());
+        existing.setDescription(updatedProduct.getDescription());
+        existing.setPrice(updatedProduct.getPrice());
+        existing.setCategory(updatedProduct.getCategory());
+        existing.setQuantity(updatedProduct.getQuantity());
+
+        return productsRepository.save(existing);
+    }
+
+    public void deleteProduct(Long id) {
+        if (!productsRepository.existsById(id)) {
+            throw new RuntimeException("Товар с id " + id + " не найден");
+        }
+        productsRepository.deleteById(id);
+    }
+
+    public List<Product> searchByName(String name) {
+        return productsRepository.findAllByNameContainingIgnoreCase(name);
+    }
+
+    public List<Product> getByCategory(String category) {
+        return productsRepository.findAllByCategoryIgnoreCase(category);
     }
 }
