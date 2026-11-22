@@ -1,29 +1,30 @@
 package islamdin.ru.Controller;
 
-import islamdin.ru.Models.Dto.UserAuthRequestDTO;
-import islamdin.ru.Models.Dto.UserAuthResponseDTO;
+import islamdin.ru.Models.Dto.AuthResponse;
+import islamdin.ru.Models.Dto.LoginRequest;
+import islamdin.ru.Models.Dto.RegisterRequest;
 import islamdin.ru.Service.AuthService;
-import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController
-@AllArgsConstructor
-@RequestMapping("/auth")
+
+@RestController                     // контроллер, возвращающий JSON
+@RequestMapping("/api/auth")        // общий префикс (помни: permitAll в конфиге!)
 public class AuthController {
 
-    private final AuthService service;
+    private final AuthService authService;
 
-
-    @PostMapping
-    public UserAuthResponseDTO register(@RequestBody UserAuthRequestDTO requestDTO){
-        return service.register(requestDTO);
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
-    @PostMapping("/auth")
-    public UserAuthResponseDTO auth(@RequestBody UserAuthRequestDTO requestDTO){
-        return service.login(requestDTO);
+    @PostMapping("/register")       // POST /api/auth/register
+    public AuthResponse register(@RequestBody RegisterRequest request) {
+        // @RequestBody: превратить JSON из тела запроса в объект
+        return authService.register(request);
+    }
+
+    @PostMapping("/login")          // POST /api/auth/login
+    public AuthResponse login(@RequestBody LoginRequest request) {
+        return authService.login(request);
     }
 }

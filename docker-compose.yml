@@ -2,6 +2,7 @@
 services:
   postgres:
     image: postgres:15
+    container_name: isla
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -14,6 +15,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
+    container_name: adminpg
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
