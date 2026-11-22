@@ -21,7 +21,7 @@ public class ProductService {
 
     public Product getProductById(Long id) {
         return productsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Товар с id " + id + " не найден"));
+                .orElseThrow(() -> new ProductNotFoundException("Товар с id " + id + " не найден"));
     }
 
     public Product addProduct(Product product) {
@@ -42,7 +42,7 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         if (!productsRepository.existsById(id)) {
-            throw new RuntimeException("Товар с id " + id + " не найден");
+            throw new ProductNotFoundException("Товар с id " + id + " не найден");
         }
         productsRepository.deleteById(id);
     }
