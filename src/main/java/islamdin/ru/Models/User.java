@@ -23,7 +23,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String passwordHash;   // храним НЕ пароль, а его хеш! (объясню ниже)
+    private String passwordHash;   // храним НЕ пароль, а его хеш!
 
     private boolean enabled = true; // можно заблокировать юзера
 
@@ -35,7 +35,7 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-    // геттеры и сеттеры
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getUsername() { return username; }
