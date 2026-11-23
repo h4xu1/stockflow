@@ -4,6 +4,7 @@ import islamdin.ru.Models.Dto.AuthResponse;
 import islamdin.ru.Models.Dto.LoginRequest;
 import islamdin.ru.Models.Dto.RegisterRequest;
 import islamdin.ru.Service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -18,7 +19,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")       // POST /api/auth/register
-    public AuthResponse register(@RequestBody RegisterRequest request) {
+    public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
         // @RequestBody: превратить JSON из тела запроса в объект
         return authService.register(request);
     }

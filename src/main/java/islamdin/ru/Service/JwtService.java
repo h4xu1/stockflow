@@ -41,7 +41,7 @@ public class JwtService {
                 .issuer("isla")   // iss: кто выдал (наше приложение)
                 .issuedAt(now)                 // iat: когда выдан
                 .expiresAt(now.plus(ttlMinutes, ChronoUnit.MINUTES)) // exp: когда умрёт
-                .subject(user.getUsername())   // sub: КОМУ выдан — главное поле!
+                .subject(user.getId().toString())
                 .claim("roles", roles)         // наш кастомный claim с ролями
                 .build();
 
