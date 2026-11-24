@@ -29,26 +29,8 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-    // Создать товар
-    @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product created = service.addProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
-    }
 
-    // Обновить товар
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        Product updated = service.updateProduct(id, product);
-        return ResponseEntity.ok(updated);
-    }
 
-    // Удалить товар
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        service.deleteProduct(id);
-        return ResponseEntity.noContent().build();
-    }
 
     // Поиск по названию
     @GetMapping("/search")

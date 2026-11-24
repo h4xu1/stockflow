@@ -131,7 +131,7 @@ public class SecurityConfig {
                         // свой профиль — любому залогиненному
                         .requestMatchers("/api/profiles/me").authenticated()
 
-                        // всё остальное пока открыто (для учёбы удобно)
+                        // всё остальное пока открыто
                         .anyRequest().permitAll()
                 )
 
