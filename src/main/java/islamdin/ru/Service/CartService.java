@@ -1,3 +1,4 @@
+
 package islamdin.ru.Service;
 
 import islamdin.ru.Models.Cart;
@@ -36,11 +37,12 @@ public class CartService {
     }
 
     @Transactional
-    public Cart getCart(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+    public Cart getCart(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new RuntimeException("Пользователь не найден"));
 
-        return cartRepository.findByUserId(user.getId())
+        return cartRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     Cart cart = new Cart();
                     cart.setUser(user);
@@ -49,12 +51,14 @@ public class CartService {
     }
 
     @Transactional
-    public Cart addItem(String username, Long productId, int quantity) {
+    public Cart addItem(Long userId, Long productId, int quantity) {
         if (quantity <= 0) {
-            throw new RuntimeException("Количество должно быть больше нуля");
+            throw new RuntimeException(
+                    "Количество должно быть больше нуля"
+            );
         }
 
-        Cart cart = getCart(username);
+        Cart cart = getCart(userId);
         Product product = productService.getProductById(productId);
 
         CartItem item = cartItemRepository
@@ -68,7 +72,9 @@ public class CartService {
         }
 
         if (newQuantity > product.getQuantity()) {
-            throw new RuntimeException("Недостаточно товара на складе");
+            throw new RuntimeException(
+                    "Недостаточно товара на складе"
+            );
         }
 
         if (item == null) {
@@ -84,8 +90,8 @@ public class CartService {
     }
 
     @Transactional
-    public CartResponse getCartResponse(String username) {
-        Cart cart = getCart(username);
+    public CartResponse getCartResponse(Long userId) {
+        Cart cart = getCart(userId);
 
         List<CartItemResponse> items = cartItemRepository
                 .findAllByCartId(cart.getId())
@@ -94,7 +100,9 @@ public class CartService {
                     Product product = item.getProduct();
 
                     BigDecimal subtotal = product.getPrice()
-                            .multiply(BigDecimal.valueOf(item.getQuantity()));
+                            .multiply(
+                                    BigDecimal.valueOf(item.getQuantity())
+                            );
 
                     return new CartItemResponse(
                             product.getId(),
@@ -110,11 +118,16 @@ public class CartService {
                 .map(CartItemResponse::subtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return new CartResponse(cart.getId(), items, totalPrice);
+        return new CartResponse(
+                cart.getId(),
+                items,
+                totalPrice
+        );
     }
+
     @Transactional
-    public void removeItem(String username, Long productId) {
-        Cart cart = getCart(username);
+    public void removeItem(Long userId, Long productId) {
+        Cart cart = getCart(userId);
 
         CartItem item = cartItemRepository
                 .findByCartIdAndProductId(cart.getId(), productId)
@@ -124,13 +137,20 @@ public class CartService {
 
         cartItemRepository.delete(item);
     }
+
     @Transactional
-    public Cart updateItemQuantity(String username, Long productId, int quantity) {
+    public Cart updateItemQuantity(
+            Long userId,
+            Long productId,
+            int quantity
+    ) {
         if (quantity <= 0) {
-            throw new RuntimeException("Количество должно быть больше нуля");
+            throw new RuntimeException(
+                    "Количество должно быть больше нуля"
+            );
         }
 
-        Cart cart = getCart(username);
+        Cart cart = getCart(userId);
 
         CartItem item = cartItemRepository
                 .findByCartIdAndProductId(cart.getId(), productId)
@@ -141,7 +161,9 @@ public class CartService {
         Product product = item.getProduct();
 
         if (quantity > product.getQuantity()) {
-            throw new RuntimeException("Недостаточно товара на складе");
+            throw new RuntimeException(
+                    "Недостаточно товара на складе"
+            );
         }
 
         item.setQuantity(quantity);

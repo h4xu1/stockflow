@@ -17,9 +17,12 @@ public class CartController {
 
     // Получить корзину текущего пользователя
     @GetMapping
-    public CartResponse getCart(@AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getSubject();
-        return cartService.getCartResponse(username);
+    public CartResponse getCart(
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        Long userId = Long.valueOf(jwt.getSubject());
+
+        return cartService.getCartResponse(userId);
     }
 
     // Добавить товар в корзину
@@ -29,35 +32,41 @@ public class CartController {
             @RequestParam Long productId,
             @RequestParam int quantity
     ) {
-        String username = jwt.getSubject();
+        Long userId = Long.valueOf(jwt.getSubject());
 
-        cartService.addItem(username, productId, quantity);
+        cartService.addItem(userId, productId, quantity);
 
-        return cartService.getCartResponse(username);
+        return cartService.getCartResponse(userId);
     }
 
-
+    // Удалить товар из корзины
     @DeleteMapping("/items/{productId}")
     public CartResponse removeItem(
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable Long productId
     ) {
-        String username = jwt.getSubject();
+        Long userId = Long.valueOf(jwt.getSubject());
 
-        cartService.removeItem(username, productId);
+        cartService.removeItem(userId, productId);
 
-        return cartService.getCartResponse(username);
+        return cartService.getCartResponse(userId);
     }
+
+    // Изменить количество товара
     @PutMapping("/items/{productId}")
     public CartResponse updateItemQuantity(
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable Long productId,
             @RequestParam int quantity
     ) {
-        String username = jwt.getSubject();
+        Long userId = Long.valueOf(jwt.getSubject());
 
-        cartService.updateItemQuantity(username, productId, quantity);
+        cartService.updateItemQuantity(
+                userId,
+                productId,
+                quantity
+        );
 
-        return cartService.getCartResponse(username);
+        return cartService.getCartResponse(userId);
     }
 }

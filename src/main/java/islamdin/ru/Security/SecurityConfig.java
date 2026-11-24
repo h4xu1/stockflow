@@ -128,11 +128,12 @@ public class SecurityConfig {
                         // (Spring сам дописывает ROLE_ к аргументу!)
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // свой профиль — любому залогиненному
-                        .requestMatchers("/api/profiles/me").authenticated()
+                                .requestMatchers("/api/profiles/me").authenticated()
 
-                        // всё остальное пока открыто
-                        .anyRequest().permitAll()
+// Получение заказов только авторизованным пользователям
+                                .requestMatchers("/order/my").authenticated()
+
+                                .anyRequest().permitAll()
                 )
 
                 // Включаем режим "resource server": Spring добавит в цепочку фильтр,
