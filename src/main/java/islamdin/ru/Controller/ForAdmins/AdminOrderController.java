@@ -11,5 +11,4 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminOrderController {
     public final OrderService orderService;
 
-
 }
