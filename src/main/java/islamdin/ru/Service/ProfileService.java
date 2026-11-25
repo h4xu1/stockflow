@@ -3,18 +3,39 @@ package islamdin.ru.Service;
 import islamdin.ru.Models.Dto.MyProfileDto;
 import islamdin.ru.Models.Dto.PublicProfileDto;
 import islamdin.ru.Models.Profile;
+import islamdin.ru.Models.Role;
+import islamdin.ru.Models.User;
 import islamdin.ru.Repository.ProfileRepository;
+import islamdin.ru.Repository.RoleRepository;
+import islamdin.ru.Repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+
+    public void setAdmin(Long userId, String roleName){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+
+        Role role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RuntimeException("Роль не найдена: " + roleName));
+
+        user.getRoles().add(role);
+
+        userRepository.save(user);
+    }
+
 
     public ProfileService(
-            ProfileRepository profileRepository
+            ProfileRepository profileRepository, UserRepository userRepository, RoleRepository roleRepository
     ) {
         this.profileRepository = profileRepository;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
 

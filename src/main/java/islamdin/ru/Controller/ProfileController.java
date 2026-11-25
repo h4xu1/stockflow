@@ -3,8 +3,10 @@ package islamdin.ru.Controller;
 
 import islamdin.ru.Models.Dto.MyProfileDto;
 import islamdin.ru.Models.Profile;
+import islamdin.ru.Models.Role;
 import islamdin.ru.Repository.ProfileRepository;
 import islamdin.ru.Service.ProfileService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -44,4 +46,6 @@ public class ProfileController {
                 currentUserId
         );
     }
+
+
 }

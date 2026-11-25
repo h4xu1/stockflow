@@ -22,25 +22,6 @@ public class OrderController {
         return orderService.save(order);
     }
 
-    @GetMapping("/{id}")
-    public OrderResponseDto getOrderById(@PathVariable Long id) {
-        return orderService.findById(id);
-    }
 
-    @GetMapping("/user/{id}")
-    public List<OrderResponseDto> getOrdersByUserId(@PathVariable Long id) {
-        return orderService.findAllByUserId(id);
-    }
 
-    @GetMapping
-    public List<OrderResponseDto> getAllOrders() {
-        return orderService.getAll();
-    }
-
-    @GetMapping("/status/{status}")
-    public List<OrderResponseDto> getOrderByStatus(
-            @PathVariable OrderStatus status
-    ) {
-        return orderService.findAllByStatus(status);
-    }
 }
