@@ -1,14 +1,12 @@
 
 package islamdin.ru.Controller;
 
-import islamdin.ru.Models.Order;
-import islamdin.ru.Models.OrderStatus;
 import islamdin.ru.Models.Dto.OrderResponseDto;
 import islamdin.ru.Service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,10 +16,11 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public OrderResponseDto addOrder(@RequestBody Order order) {
-        return orderService.save(order);
+    public OrderResponseDto addOrder(
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        Long userId = Long.valueOf(jwt.getSubject());
+
+        return orderService.checkout(userId);
     }
-
-
-
 }

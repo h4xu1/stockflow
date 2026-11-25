@@ -1,16 +1,18 @@
 
 package islamdin.ru.Service;
 
-import islamdin.ru.Models.Order;
-import islamdin.ru.Models.OrderItem;
-import islamdin.ru.Models.OrderStatus;
+import islamdin.ru.Models.*;
 import islamdin.ru.Models.Dto.OrderResponseDto;
 import islamdin.ru.Models.Dto.OrderItemResponseDto;
+import islamdin.ru.Repository.CartRepository;
 import islamdin.ru.Repository.OrderRepository;
+import islamdin.ru.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,10 +20,65 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final CartRepository cartRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public OrderResponseDto save(Order order) {
+    public OrderResponseDto checkout(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new RuntimeException("Пользователь не найден"));
+
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() ->
+                        new RuntimeException("Корзина не найдена"));
+
+        if (cart.getItems() == null || cart.getItems().isEmpty()) {
+            throw new RuntimeException("Корзина пуста");
+        }
+
+        Order order = new Order();
+        order.setUser(user);
+        order.setStatus(OrderStatus.NEW);
+
+        List<OrderItem> orderItems = new ArrayList<>();
+        BigDecimal totalPrice = BigDecimal.ZERO;
+
+        for (CartItem cartItem : cart.getItems()) {
+
+            Product product = cartItem.getProduct();
+            int quantity = cartItem.getQuantity();
+
+            if (quantity <= 0 || product.getQuantity() < quantity) {
+                throw new RuntimeException(
+                        "Недостаточно товара на складе: " + product.getName()
+                );
+            }
+
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrder(order);
+            orderItem.setProduct(product);
+            orderItem.setQuantity(quantity);
+            orderItem.setPriceAtOrder(product.getPrice());
+
+            orderItems.add(orderItem);
+
+            BigDecimal subtotal = product.getPrice()
+                    .multiply(BigDecimal.valueOf(quantity));
+
+            totalPrice = totalPrice.add(subtotal);
+
+            product.setQuantity(product.getQuantity() - quantity);
+        }
+
+        order.setItems(orderItems);
+        order.setTotalPrice(totalPrice);
+
         Order savedOrder = orderRepository.save(order);
+
+        cart.getItems().clear();
+
         return toDto(savedOrder);
     }
 
@@ -36,7 +93,8 @@ public class OrderService {
     @Transactional(readOnly = true)
     public OrderResponseDto findById(Long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Заказ не найден"));
+                .orElseThrow(() ->
+                        new RuntimeException("Заказ не найден"));
 
         return toDto(order);
     }
